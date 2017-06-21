@@ -22,9 +22,10 @@ export function getSchema(ctx) {
       type: String,
       enum: [
         'like', // Или лайк или ничего
-        'likeDislike', // Лайк и дизлайк
+        // 'likeDislike', // Лайк и дизлайк
         'rating', // Оценка 1 - 10
         'view', // Просмотр
+        'follow', // Просмотр
       ],
       index: true,
     },
@@ -70,6 +71,16 @@ export function getSchema(ctx) {
     }
     return next();
   });
+
+  schema.statics.prepareOne = function (obj) {
+    return this.populate(obj, ['user']);
+  };
+  schema.statics.prepare = function (obj) {
+    if (Array.isArray(obj)) {
+      return Promise.map(obj, o => this.prepareOne(o));
+    }
+    return this.prepareOne(obj);
+  };
 
   // api/v1/module/notification POST socket
   // api/v1/admin/module/notification POST
