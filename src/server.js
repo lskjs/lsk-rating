@@ -5,7 +5,7 @@ export default (ctx) => {
   return class RatingModule {
 
     async init() {
-      this.models = getModels(ctx);
+      this.models = getModels(ctx, this);
       this.config = ctx.config.rating;
     }
 

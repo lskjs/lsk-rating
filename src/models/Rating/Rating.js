@@ -1,6 +1,15 @@
 import UniversalSchema from 'lego-starter-kit/utils/UniversalSchema';
-export function getSchema(ctx) {
+export function getSchema(ctx, module) {
   const mongoose = ctx.db;
+  // console.log('module.config', module.config);
+  const types = (module.config || {}).types || [
+    'like', // Или лайк или ничего
+    'block', // Или лайк или ничего
+    // 'likeDislike', // Лайк и дизлайк
+    'rating', // Оценка 1 - 10
+    'view', // Просмотр
+    'follow', // Просмотр
+  ];
   const schema = new UniversalSchema({
     subjectId: {
       type: String,
@@ -20,13 +29,7 @@ export function getSchema(ctx) {
     },
     type: {
       type: String,
-      enum: [
-        'like', // Или лайк или ничего
-        // 'likeDislike', // Лайк и дизлайк
-        'rating', // Оценка 1 - 10
-        'view', // Просмотр
-        'follow', // Просмотр
-      ],
+      enum: types,
       index: true,
     },
     value: {
@@ -88,6 +91,6 @@ export function getSchema(ctx) {
   return schema;
 }
 
-export default(ctx) => {
-  return ctx.db.model('Rating', getSchema(ctx).getMongooseSchema(), 'ratings');
+export default(ctx, module) => {
+  return ctx.db.model('Rating', getSchema(ctx, module).getMongooseSchema(), 'ratings');
 };
